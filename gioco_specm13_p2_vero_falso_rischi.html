@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>SPECM13 P2 — Vero o Falso: Rischi biologici, chimici e rumore</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#4a148c,#6a1b9a,#8e24aa);min-height:100vh;overflow:hidden;display:flex;justify-content:center;align-items:center}
+.container{background:#fff;width:800px;height:550px;display:flex;flex-direction:column;border-radius:10px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.header{background:linear-gradient(135deg,#4a148c,#6a1b9a);color:#fff;padding:11px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.header h1{font-size:15px;font-weight:700}.header p{font-size:11px;opacity:.8;margin-top:1px}
+.btn-group{display:flex;gap:8px}
+button{padding:7px 13px;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s}
+.btn-white{background:#fff;color:#4a148c}.btn-white:hover{background:#f3e5f5}
+.btn-outline{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4)}.btn-outline:hover{background:rgba(255,255,255,.25)}
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.hidden{display:none!important}
+.instr{padding:18px 24px;overflow-y:auto;flex:1}
+.instr h2{color:#1b5e20;font-size:24px;margin-bottom:10px; margin-top: 20px}
+.instr p,.instr li{font-size:20px;line-height:1.6;color:#444;margin-bottom:5px; margin-top: 20px}
+.instr ul{margin-left:18px;margin-bottom:10px}
+.how-grid{display:flex;gap:10px;margin:10px 0}
+.how-step{flex:1;background:#f3e5f5;border-radius:8px;padding:10px;text-align:center;font-size:12px;color:#6a1b9a;font-weight:600;line-height:1.5}
+.how-step .num{font-size:22px;display:block;margin-bottom:4px}
+.start-btn{background:linear-gradient(135deg,#4a148c,#6a1b9a);color:#fff;padding:11px 32px;font-size:14px;border-radius:8px;display:block;margin:14px auto 0;cursor:pointer;border:none;font-weight:600}
+.start-btn:hover{transform:translateY(-2px)}
+.game-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.status-bar{display:flex;align-items:center;gap:12px;padding:8px 16px;background:#f5f5f5;border-bottom:1px solid #e0e0e0;flex-shrink:0;font-size:12px}
+.q-badge{background:#6a1b9a;color:#fff;border-radius:20px;padding:2px 12px;font-size:12px;font-weight:700}
+.prog-bar{flex:1;height:6px;background:#eee;border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#4a148c,#ab47bc);border-radius:3px;transition:width .4s}
+.score-lbl{font-weight:700;color:#6a1b9a}
+.card-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 22px;gap:12px}
+.topic-tag{background:#f3e5f5;color:#6a1b9a;border-radius:20px;padding:4px 14px;font-size:20px;font-weight:700}
+.statement-card{background:#fafafa;border:2px solid #ce93d8;border-radius:12px;padding:16px 20px;width:100%;text-align:center;font-size:15px;color:#333;line-height:1.6;font-weight:500;min-height:85px;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.statement-card.correct-card{border-color:#6a1b9a;background:#f3e5f5}
+.statement-card.wrong-card{border-color:#c62828;background:#ffebee}
+.answer-row{display:flex;gap:20px;justify-content:center}
+.vf-btn{width:130px;height:52px;border-radius:10px;font-size:17px;font-weight:700;cursor:pointer;border:3px solid transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.vf-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.15)}
+.vf-btn:disabled{cursor:not-allowed;opacity:.6}
+.btn-vero{background:#f3e5f5;border-color:#6a1b9a;color:#4a148c}
+.btn-vero:hover:not(:disabled){background:#e1bee7}
+.btn-falso{background:#ffebee;border-color:#c62828;color:#b71c1c}
+.btn-falso:hover:not(:disabled){background:#ffcdd2}
+.btn-vero.sel-ok,.btn-falso.sel-ok{box-shadow:0 0 0 3px #6a1b9a;transform:scale(1.05)}
+.btn-vero.sel-ko,.btn-falso.sel-ko{box-shadow:0 0 0 3px #c62828;opacity:.5}
+.feedback-area{background:#e3f2fd;border-left:4px solid #1565c0;border-radius:8px;padding:9px 14px;width:100%;font-size:12px;color:#0d47a1;line-height:1.5;display:none}
+.feedback-area.show{display:block}
+.next-row{display:flex;justify-content:flex-end;width:100%}
+.next-q-btn{background:linear-gradient(135deg,#4a148c,#6a1b9a);color:#fff;padding:8px 22px;font-size:12px;border-radius:7px;cursor:pointer;border:none;font-weight:600;display:none}
+.next-q-btn.show{display:block}
+.result-page{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+.result-box{text-align:center;max-width:480px}
+.result-icon{font-size:55px;margin-bottom:12px}
+.result-box h2{font-size:20px;font-weight:700;color:#6a1b9a;margin-bottom:8px}
+.result-box p{font-size:13px;color:#555;line-height:1.6;margin-bottom:15px}
+.result-score{background:#f3e5f5;border-radius:10px;padding:10px 20px;font-size:15px;font-weight:700;color:#6a1b9a;margin-bottom:15px;display:inline-block}
+.result-btns{display:flex;gap:10px;justify-content:center}
+.btn-prim{background:linear-gradient(135deg,#4a148c,#6a1b9a);color:#fff;padding:10px 24px;font-size:13px;border-radius:8px;cursor:pointer;border:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div><h1>🔬 Vero o Falso? Rischi biologici, chimici e rumore</h1><p>SPECM13 P2 – Agenti biologici, chimici e fisici</p></div>
+    <div class="btn-group">
+      <button class="btn-outline" onclick="resetGame()">🔄 Rigioca</button>
+      <button class="btn-white" onclick="window.close()">Torna al corso</button>
+    </div>
+  </div>
+  <div class="content">
+    <div id="instrPage" class="instr">
+      <h2>🎯 Come funziona</h2>
+      <p>Ti vengono presentate <strong>10 affermazioni</strong> su rischi biologici, chimici e da rumore. Decidi se ciascuna è vera o falsa.</p>
+      <div class="how-grid">
+        <div class="how-step"><span class="num">📖</span>Leggi l'affermazione con attenzione</div>
+        <div class="how-step"><span class="num">✅❌</span>Clicca VERO o FALSO</div>
+        <div class="how-step"><span class="num">💡</span>Leggi la spiegazione e vai avanti</div>
+      </div>
+      <ul><li>Argomenti: batteri/virus/funghi, pittogrammi GHS/CLP, decibel e limiti di legge, SDS</li><li>Alcune affermazioni contengono errori sottili — leggi con attenzione</li></ul>
+      <button class="start-btn" onclick="startGame()">▶ Inizia</button>
+    </div>
+    <div id="gamePage" class="game-wrap hidden">
+      <div class="status-bar">
+        <span class="q-badge">Domanda <span id="qNum">1</span>/10</span>
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+        <span class="score-lbl">Corrette: <span id="scoreNum">0</span></span>
+      </div>
+      <div class="card-area">
+        <div class="topic-tag" id="topicTag"></div>
+        <div class="statement-card" id="statCard"></div>
+        <div class="answer-row">
+          <button class="vf-btn btn-vero" id="btnVero" onclick="answer(true)">✓ VERO</button>
+          <button class="vf-btn btn-falso" id="btnFalso" onclick="answer(false)">✗ FALSO</button>
+        </div>
+        <div class="feedback-area" id="feedbackArea"></div>
+        <div class="next-row"><button class="next-q-btn" id="nextQBtn" onclick="nextQ()">Domanda successiva →</button></div>
+      </div>
+    </div>
+    <div id="resultPage" class="result-page hidden">
+      <div class="result-box">
+        <div class="result-icon" id="rIcon"></div>
+        <h2 id="rTitle"></h2>
+        <div class="result-score" id="rScore"></div>
+        <p id="rMsg"></p>
+        <div class="result-btns">
+          <button class="btn-prim" onclick="resetGame()">🔄 Rigioca</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const QS=[
+  {topic:"🦠 Rischi biologici",q:"I rischi biologici comprendono batteri, virus, funghi e parassiti.",ans:true,exp:"Corretto! I rischi biologici includono tutti gli agenti biologici: batteri, virus, funghi, protozoi e parassiti (D.Lgs. 81/2008, Titolo X)."},
+  {topic:"🦠 Rischi biologici",q:"Le mascherine chirurgiche proteggono completamente dai rischi biologici.",ans:false,exp:"Falso. Le mascherine chirurgiche riducono la trasmissione ma non proteggono completamente. Per protezione efficace servono dispositivi FFP2 o FFP3."},
+  {topic:"☣️ Rischi chimici",q:"Le sostanze chimiche pericolose devono riportare l'etichettatura GHS/CLP.",ans:true,exp:"Corretto! Il Regolamento CLP (CE 1272/2008) impone l'etichettatura con pittogrammi GHS per tutte le sostanze e miscele pericolose."},
+  {topic:"🔊 Rumore",q:"Il valore limite di esposizione (VLE) al rumore è 87 dB(A).",ans:true,exp:"Corretto! Il D.Lgs. 81/2008 stabilisce il VLE al rumore a 87 dB(A). Il valore d'azione superiore (obbligo DPI) è 85 dB(A)."},
+  {topic:"🔊 Rumore",q:"L'esposizione cronica al rumore può causare sordità permanente.",ans:true,exp:"Corretto! L'ipoacusia da rumore è una malattia professionale frequente e irreversibile. La prevenzione è l'unica tutela efficace."},
+  {topic:"☣️ Rischi chimici",q:"I rischi chimici si trasmettono solo per ingestione.",ans:false,exp:"Falso! Le sostanze chimiche pericolose entrano nell'organismo per inalazione, contatto cutaneo e mucoso, e solo in alcuni casi per ingestione."},
+  {topic:"☣️ Rischi chimici",q:"Le Schede di Dati di Sicurezza (SDS) non sono obbligatorie per i prodotti chimici pericolosi.",ans:false,exp:"Falso! Il Regolamento REACH (CE 1907/2006) rende obbligatoria la SDS per tutte le sostanze e miscele pericolose."},
+  {topic:"🦠 Rischi biologici",q:"Un lavoratore esposto a rischio biologico ha diritto alla sorveglianza sanitaria.",ans:true,exp:"Corretto! Il D.Lgs. 81/2008 Titolo X prevede la sorveglianza sanitaria obbligatoria per i lavoratori esposti ad agenti biologici."},
+  {topic:"🔊 Rumore",q:"Superati gli 85 dB(A) il datore di lavoro è obbligato a mettere a disposizione i DPI uditivi.",ans:true,exp:"Corretto! Questo è il valore d'azione superiore. Il lavoratore è obbligato a utilizzare i DPI uditivi messi a disposizione."},
+  {topic:"☣️ Rischi chimici",q:"I pittogrammi GHS sulle etichette chimiche hanno forma romboidale con bordo rosso.",ans:true,exp:"Corretto! I pittogrammi GHS hanno sfondo bianco, forma di rombo (quadrato su vertice), bordo rosso e simbolo nero all'interno."},
+];
+let qs=[],idx=0,score=0,answered=false;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startGame(){
+  qs=shuffle([...QS]);idx=0;score=0;
+  document.getElementById('instrPage').classList.add('hidden');
+  document.getElementById('resultPage').classList.add('hidden');
+  document.getElementById('gamePage').classList.remove('hidden');
+  loadQ();
+}
+function resetGame(){
+  document.getElementById('gamePage').classList.add('hidden');
+  document.getElementById('resultPage').classList.add('hidden');
+  document.getElementById('instrPage').classList.remove('hidden');
+}
+function loadQ(){
+  answered=false;
+  const q=qs[idx];
+  document.getElementById('qNum').textContent=idx+1;
+  document.getElementById('progFill').style.width=(idx/qs.length*100)+'%';
+  document.getElementById('scoreNum').textContent=score;
+  document.getElementById('topicTag').textContent=q.topic;
+  document.getElementById('statCard').textContent=q.q;
+  document.getElementById('statCard').className='statement-card';
+  document.getElementById('feedbackArea').className='feedback-area';
+  document.getElementById('feedbackArea').textContent='';
+  document.getElementById('nextQBtn').className='next-q-btn';
+  const bv=document.getElementById('btnVero'),bf=document.getElementById('btnFalso');
+  bv.disabled=false;bf.disabled=false;
+  bv.className='vf-btn btn-vero';bf.className='vf-btn btn-falso';
+}
+function answer(val){
+  if(answered)return;answered=true;
+  const q=qs[idx];const ok=q.ans===val;
+  if(ok){score++;document.getElementById('scoreNum').textContent=score;}
+  const card=document.getElementById('statCard');
+  card.classList.add(ok?'correct-card':'wrong-card');
+  const bv=document.getElementById('btnVero'),bf=document.getElementById('btnFalso');
+  bv.disabled=true;bf.disabled=true;
+  if(val===true) bv.classList.add(ok?'sel-ok':'sel-ko');
+  else bf.classList.add(ok?'sel-ok':'sel-ko');
+  if(q.ans===true) bv.classList.add('sel-ok');
+  else bf.classList.add('sel-ok');
+  const fa=document.getElementById('feedbackArea');
+  fa.innerHTML=(ok?'✅ ':'❌ ')+q.exp;
+  fa.className='feedback-area show';
+  document.getElementById('nextQBtn').className='next-q-btn show';
+}
+function nextQ(){
+  idx++;
+  if(idx<qs.length){loadQ();}
+  else{endGame();}
+}
+function endGame(){
+  document.getElementById('gamePage').classList.add('hidden');
+  document.getElementById('resultPage').classList.remove('hidden');
+  const pct=Math.round(score/qs.length*100);
+  document.getElementById('rIcon').textContent=score===qs.length?'🏆':pct>=70?'👍':'💪';
+  document.getElementById('rTitle').textContent=score===qs.length?'Perfetto!':pct>=70?'Ottimo!':'Riprova!';
+  document.getElementById('rScore').textContent=`${score}/${qs.length} corrette (${pct}%)`;
+  document.getElementById('rMsg').textContent=score===qs.length?'Conosci perfettamente i rischi biologici, chimici e da rumore. Eccellente!':
+    pct>=70?'Buona conoscenza. Rileggi le spiegazioni delle domande sbagliate per consolidare.':
+    'Ripassate i moduli su rischi biologici, chimici e rumore. Poi riprova!';
+}
+</script>
+</body>
+</html>
